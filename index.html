@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  index.html — the single page of the portfolio.
+  Everything a visitor reads lives here. Structure only: no styling decisions.
+  Replace every {{ PLACEHOLDER }} and every block marked TODO.
+  ============================================================================
+-->
+<html lang="en">
+<head>
+  <!-- Tells the browser this file is UTF-8, so accented characters and symbols render. Must be first. -->
+  <meta charset="utf-8">
+
+  <!-- Without this, phones pretend to be a 980px-wide desktop and shrink the page. Non-negotiable. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- The text in the browser tab and in Google results. Format: Name — Role -->
+  <title>Jake Hewer — Software Engineer</title>
+
+  <!-- The grey description under the blue link in Google. ~150 characters. -->
+  <meta name="description" content="Software engineer building backend services and developer tooling. Selected projects, writing and contact details.">
+
+  <!-- Open Graph: controls the preview card when the link is pasted into LinkedIn, Slack or WhatsApp.
+       og:image should be an absolute URL to a 1200x630 PNG. This matters more than you'd think —
+       a link with no card looks broken next to everyone else's. -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Jake Hewer — Software Engineer">
+  <meta property="og:description" content="Software engineer building backend services and developer tooling.">
+  <meta property="og:url" content="https://example.com/">
+  <meta property="og:image" content="https://example.com/assets/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- The canonical URL stops search engines treating www / non-www as two sites. -->
+  <link rel="canonical" href="https://example.com/">
+
+  <!-- Favicon: the little icon in the tab. An SVG works everywhere modern. -->
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+
+  <!-- Our one stylesheet. Loaded before the body renders, so there is no flash of unstyled text. -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <!--
+    Skip link: the first thing a keyboard or screen-reader user hits. It lets them jump
+    past the navigation straight to the content. Visually hidden until focused (see CSS).
+  -->
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ======================================================================
+       HEADER / NAVIGATION
+       <header> is a landmark element. Screen readers can jump straight to it.
+       ====================================================================== -->
+  <header class="site-header" id="site-header">
+    <div class="container header-inner">
+      <a class="wordmark" href="#top" aria-label="Home">JH</a>
+
+      <!-- The button is only visible on narrow screens. aria-expanded is toggled by JS
+           so assistive tech knows whether the menu is open. -->
+      <button
+        class="nav-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="primary-nav"
+        aria-label="Menu">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+
+      <nav class="nav" id="primary-nav" aria-label="Primary">
+        <ul class="nav-list">
+          <li><a href="#work">Work</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#writing">Writing</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- <main> holds the unique content of the page. Exactly one per page. -->
+  <main id="main">
+
+    <!-- ====================================================================
+         HERO
+         The only job of this section: in five seconds, tell a stranger who you
+         are, what you build, and give them one thing to click.
+         ==================================================================== -->
+    <section class="hero" id="top">
+      <div class="container">
+        <p class="eyebrow">Software Engineer &middot; London</p>
+
+        <!-- Exactly one <h1> per page. It is the page's title in the document outline. -->
+        <h1 class="hero-title">
+          I build backend systems that stay <span class="accent">boring</span> under load.
+        </h1>
+
+        <p class="hero-lede">
+          {{ TWO SENTENCES. What you work on, and the kind of problem you like.
+          Concrete beats grand: "Go and Postgres services handling ~4k req/s"
+          beats "passionate about scalable solutions". }}
+        </p>
+
+        <div class="hero-actions">
+          <a class="button button-primary" href="#work">See my work</a>
+          <a class="button button-ghost" href="mailto:you@example.com">Get in touch</a>
+        </div>
+
+        <!-- A short, scannable list of what you actually use. Not a skills bar chart —
+             nobody believes "React 85%". -->
+        <ul class="tag-list" aria-label="Core technologies">
+          <li>Go</li>
+          <li>TypeScript</li>
+          <li>PostgreSQL</li>
+          <li>AWS</li>
+          <li>Terraform</li>
+          <li>Docker</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SELECTED WORK
+         Three to four projects. Each one is a mini case study, not a screenshot.
+         Structure that works: what it is → what was hard → what you did → result.
+         ==================================================================== -->
+    <section class="section" id="work">
+      <div class="container">
+        <h2 class="section-title">Selected work</h2>
+        <p class="section-intro">
+          A few things I have built end to end. Each links to the code or a longer write-up.
+        </p>
+
+        <div class="project-list">
+
+          <!-- ---- PROJECT 1 — copy this whole <article> for each project ---- -->
+          <article class="project">
+            <div class="project-meta">
+              <p class="project-year">2026</p>
+              <ul class="tag-list tag-list-sm" aria-label="Technologies used">
+                <li>Go</li>
+                <li>Redis</li>
+                <li>gRPC</li>
+              </ul>
+            </div>
+
+            <div class="project-body">
+              <h3 class="project-title">
+                <a href="https://github.com/your-username/project-one">Ratchet — deployment gate service</a>
+              </h3>
+
+              <p class="project-summary">
+                {{ ONE SENTENCE: what it is and who it is for. }}
+              </p>
+
+              <!-- This is the part that gets you interviews. Be specific. Numbers if you have them. -->
+              <p class="project-detail">
+                {{ THE INTERESTING BIT. What was actually hard, what you chose, and why.
+                e.g. "Deploys were being approved faster than CI could finish, so a bad build could
+                reach prod. I built a service that holds a lock per environment and only releases it
+                when every required check reports green. Cut bad-deploy rollbacks from ~3/month to 0
+                over six months." }}
+              </p>
+
+              <p class="project-links">
+                <a href="https://github.com/your-username/project-one">Source</a>
+                <a href="https://example.com/project-one">Live</a>
+              </p>
+            </div>
+          </article>
+
+          <!-- ---- PROJECT 2 ---- -->
+          <article class="project">
+            <div class="project-meta">
+              <p class="project-year">2025</p>
+              <ul class="tag-list tag-list-sm" aria-label="Technologies used">
+                <li>TypeScript</li>
+                <li>Postgres</li>
+                <li>AWS Lambda</li>
+              </ul>
+            </div>
+            <div class="project-body">
+              <h3 class="project-title">
+                <a href="https://github.com/your-username/project-two">Project two</a>
+              </h3>
+              <p class="project-summary">{{ ONE SENTENCE. }}</p>
+              <p class="project-detail">{{ THE INTERESTING BIT. }}</p>
+              <p class="project-links">
+                <a href="https://github.com/your-username/project-two">Source</a>
+              </p>
+            </div>
+          </article>
+
+          <!-- ---- PROJECT 3 ---- -->
+          <article class="project">
+            <div class="project-meta">
+              <p class="project-year">2025</p>
+              <ul class="tag-list tag-list-sm" aria-label="Technologies used">
+                <li>Python</li>
+                <li>Docker</li>
+              </ul>
+            </div>
+            <div class="project-body">
+              <h3 class="project-title">
+                <a href="https://github.com/your-username/project-three">Project three</a>
+              </h3>
+              <p class="project-summary">{{ ONE SENTENCE. }}</p>
+              <p class="project-detail">{{ THE INTERESTING BIT. }}</p>
+              <p class="project-links">
+                <a href="https://github.com/your-username/project-three">Source</a>
+              </p>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         ABOUT
+         Short. Written as a person, not a CV summary. Three paragraphs maximum.
+         ==================================================================== -->
+    <section class="section section-alt" id="about">
+      <div class="container">
+        <div class="about-grid">
+          <div>
+            <h2 class="section-title">About</h2>
+            <p>
+              {{ PARAGRAPH ONE: what you do now and where. One line of context on the company
+              if it is not a household name. }}
+            </p>
+            <p>
+              {{ PARAGRAPH TWO: how you got here, briefly, and what you are good at.
+              Say the thing that is actually true of you rather than the thing everyone says. }}
+            </p>
+            <p>
+              {{ PARAGRAPH THREE (optional): what you are looking for, or what you do away
+              from a keyboard. One line is plenty. }}
+            </p>
+            <p>
+              <a class="text-link" href="assets/cv.pdf">Download my CV (PDF)</a>
+            </p>
+          </div>
+
+          <!-- Optional headshot. If you use one, it needs real alt text.
+               Set width and height so the browser reserves the space and the page
+               does not jump around while the image loads.
+          <figure class="about-figure">
+            <img src="assets/portrait.jpg" width="400" height="500"
+                 alt="Jake Hewer" loading="lazy">
+          </figure>
+          -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         WRITING
+         Optional, but strong signal for engineering roles. Delete if you have
+         nothing to put here — an empty section is worse than no section.
+         ==================================================================== -->
+    <section class="section" id="writing">
+      <div class="container">
+        <h2 class="section-title">Writing</h2>
+        <ul class="post-list">
+          <li class="post">
+            <!-- <time> with a machine-readable datetime is the correct way to mark up a date. -->
+            <time class="post-date" datetime="2026-05-14">May 2026</time>
+            <a class="post-title" href="#">{{ Post title }}</a>
+            <p class="post-excerpt">{{ One line on what the post argues. }}</p>
+          </li>
+          <li class="post">
+            <time class="post-date" datetime="2026-02-02">Feb 2026</time>
+            <a class="post-title" href="#">{{ Post title }}</a>
+            <p class="post-excerpt">{{ One line on what the post argues. }}</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         CONTACT
+         One clear action. Do not build a contact form — it needs a backend,
+         it gets spam, and people would rather email you.
+         ==================================================================== -->
+    <section class="section section-alt" id="contact">
+      <div class="container contact">
+        <h2 class="section-title">Get in touch</h2>
+        <p class="contact-lede">
+          {{ One line: what you would like to hear about. }}
+        </p>
+        <p>
+          <a class="button button-primary" href="mailto:you@example.com">you@example.com</a>
+        </p>
+        <ul class="social-list">
+          <li><a href="https://github.com/your-username">GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/your-username/">LinkedIn</a></li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <!-- JS fills in the year so you never ship a stale copyright. -->
+      <p>&copy; <span data-year></span> Jake Hewer</p>
+      <p><a href="#top">Back to top</a></p>
+    </div>
+  </footer>
+
+  <!-- Script at the end of <body> so the HTML is parsed and painted before JS runs.
+       `defer` does the same job even if you move it to <head>. -->
+  <script src="main.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,600 @@
+/* ==========================================================================
+   styles.css
+
+   Read top to bottom — it is ordered from most general to most specific,
+   which is also the order the cascade resolves in. Sections:
+
+     1. Design tokens      — the variables everything else is built from
+     2. Reset & base       — undo browser defaults, set sane global rules
+     3. Layout primitives  — container, section spacing
+     4. Components         — header, hero, buttons, projects, footer
+     5. Responsive         — the handful of places narrow screens need help
+     6. Preferences        — reduced motion, print
+
+   Change a colour or a spacing value in section 1 and the whole site follows.
+   That is the entire point of doing it this way.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. DESIGN TOKENS
+   Custom properties declared on :root are available everywhere.
+   ========================================================================== */
+
+:root {
+  /* --- Colour: light mode -------------------------------------------------
+     Two backgrounds (page and alternating band), two text weights, one border,
+     one accent. Six colours is enough for a whole site. Resist adding more. */
+  --bg:          #fbfbfa;
+  --bg-alt:      #f2f2ef;
+  --surface:     #ffffff;
+  --text:        #16161a;
+  --text-muted:  #56565f;
+  --border:      #e4e4df;
+  --accent:      #2f45c5;
+  /* Text placed ON the accent colour. Must contrast with it, not with the page. */
+  --on-accent:   #ffffff;
+  --accent-soft: #ecefFC;   /* a wash of the accent, for chips and highlights */
+
+  /* --- Typography ---------------------------------------------------------
+     The system font stack: uses whatever the OS already has, so it renders
+     instantly with zero network requests and looks native on every platform.
+     Swap for a webfont later if you want, but start here. */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+               "Liberation Mono", monospace;
+
+  /* Fluid type. clamp(min, preferred, max) — the middle value scales with the
+     viewport width (1vw = 1% of screen width), the outer two stop it getting
+     silly on a phone or an ultrawide. No media queries needed for text size. */
+  --step--1: clamp(0.83rem, 0.80rem + 0.15vw, 0.90rem);
+  --step-0:  clamp(1.00rem, 0.96rem + 0.20vw, 1.12rem);
+  --step-1:  clamp(1.20rem, 1.12rem + 0.40vw, 1.44rem);
+  --step-2:  clamp(1.45rem, 1.30rem + 0.75vw, 1.95rem);
+  --step-3:  clamp(1.90rem, 1.55rem + 1.75vw, 3.10rem);
+
+  /* --- Spacing ------------------------------------------------------------
+     A scale, not arbitrary numbers. Every margin and padding on the site is
+     one of these. Consistent rhythm is most of what "designed" looks like. */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 5rem;
+
+  /* --- Everything else ---------------------------------------------------- */
+  --radius:      10px;
+  --radius-sm:   6px;
+  --measure:     40rem;    /* max width of a paragraph — ~70 characters */
+  --container:   68rem;    /* max width of the page */
+  --transition:  180ms ease;
+}
+
+/* --- Colour: dark mode ---------------------------------------------------
+   prefers-color-scheme reads the user's OS setting. Because every colour is a
+   variable, redefining seven of them is the entire dark theme. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:          #0e0e11;
+    --bg-alt:      #15151a;
+    --surface:     #1a1a20;
+    --text:        #ececea;
+    --text-muted:  #9a9aa4;
+    --border:      #292930;
+    --accent:      #97a6ff;
+    /* The dark-mode accent is light, so text on it must be dark. Getting this
+       wrong is the single most common dark-mode contrast bug. */
+    --on-accent:   #0e0e11;
+    --accent-soft: #1c1f36;
+  }
+}
+
+/* Tells the browser to render native widgets (scrollbars, form controls) to
+   match. Cheap, and without it scrollbars look wrong in dark mode. */
+:root { color-scheme: light dark; }
+
+
+/* ==========================================================================
+   2. RESET & BASE
+   ========================================================================== */
+
+/* border-box means padding and border count *inside* an element's width.
+   Without this, a 300px box with 20px padding is 340px wide and every layout
+   becomes arithmetic. Set it once, forget it forever. */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* The browser's default margins on headings and paragraphs are inconsistent.
+   Clear them and set spacing deliberately below. */
+body, h1, h2, h3, h4, p, figure, blockquote, ul, ol {
+  margin: 0;
+  padding: 0;
+}
+
+ul[class], ol[class] { list-style: none; }
+
+html {
+  /* Smooth scrolling for the in-page nav links. Overridden for users who have
+     asked for reduced motion — see section 6. */
+  scroll-behavior: smooth;
+  /* Stops anchored sections landing underneath the sticky header. */
+  scroll-padding-top: 5rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--step-0);
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  /* Belt and braces: stops any single wide element causing horizontal scroll. */
+  overflow-x: hidden;
+}
+
+p { max-width: var(--measure); }
+p + p { margin-top: var(--space-4); }
+
+h1, h2, h3 {
+  line-height: 1.15;
+  font-weight: 620;
+  letter-spacing: -0.02em;
+  /* Stops a heading breaking with one lonely word on the last line. */
+  text-wrap: balance;
+}
+
+img, svg, video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color var(--transition);
+}
+a:hover { color: var(--text); }
+
+/* NEVER remove focus outlines without replacing them. This is how keyboard
+   users know where they are. :focus-visible shows it for keyboard focus only,
+   so mouse clicks stay clean. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* Visually hidden but still read aloud by screen readers.
+   Used for the skip link and any label that is obvious sighted, not to software. */
+.skip-link {
+  position: absolute;
+  left: var(--space-4);
+  top: var(--space-4);
+  z-index: 100;
+  padding: var(--space-2) var(--space-4);
+  background: var(--accent);
+  color: var(--on-accent);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform var(--transition);
+}
+.skip-link:focus { transform: translateY(0); }
+
+
+/* ==========================================================================
+   3. LAYOUT PRIMITIVES
+   ========================================================================== */
+
+/* One class does all horizontal layout on the site: centre the content,
+   cap its width, and guarantee breathing room at the screen edges. */
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--space-5);
+}
+
+.section {
+  padding-block: var(--space-8);
+  border-top: 1px solid var(--border);
+}
+
+/* Alternating band, so sections read as distinct without needing dividers. */
+.section-alt { background: var(--bg-alt); }
+
+.section-title {
+  font-size: var(--step-2);
+  margin-bottom: var(--space-3);
+}
+
+.section-intro {
+  color: var(--text-muted);
+  margin-bottom: var(--space-7);
+}
+
+
+/* ==========================================================================
+   4. COMPONENTS
+   ========================================================================== */
+
+/* --- Header --------------------------------------------------------------- */
+
+.site-header {
+  position: sticky;   /* stays put as you scroll */
+  top: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--transition);
+}
+
+/* JS adds .is-scrolled once the page moves, so the header only grows a border
+   when it is actually overlapping content. */
+.site-header.is-scrolled { border-bottom-color: var(--border); }
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 4rem;
+}
+
+.wordmark {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--step-0);
+  letter-spacing: 0.05em;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.nav-list {
+  display: flex;
+  gap: var(--space-5);
+  font-size: var(--step--1);
+}
+
+.nav-list a {
+  color: var(--text-muted);
+  text-decoration: none;
+  padding-block: var(--space-2);
+}
+.nav-list a:hover { color: var(--text); }
+
+/* JS adds .is-active to whichever section is currently on screen. */
+.nav-list a.is-active { color: var(--text); font-weight: 600; }
+
+/* The hamburger. Hidden on desktop, shown by the media query in section 5. */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+}
+.nav-toggle-bar {
+  display: block;
+  width: 1rem;
+  height: 1.5px;
+  margin-inline: auto;
+  background: var(--text);
+  transition: transform var(--transition), opacity var(--transition);
+}
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar:first-child {
+  transform: translateY(3.25px) rotate(45deg);
+}
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar:last-child {
+  transform: translateY(-3.25px) rotate(-45deg);
+}
+
+/* --- Hero ----------------------------------------------------------------- */
+
+.hero {
+  padding-block: clamp(var(--space-7), 12vh, var(--space-8));
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--space-4);
+}
+
+.hero-title {
+  font-size: var(--step-3);
+  max-width: 20ch;          /* long headlines are hard to read; force a break */
+  margin-bottom: var(--space-5);
+}
+
+.accent { color: var(--accent); }
+
+.hero-lede {
+  font-size: var(--step-1);
+  color: var(--text-muted);
+  max-width: 46ch;
+  margin-bottom: var(--space-6);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-7);
+}
+
+/* --- Buttons -------------------------------------------------------------- */
+
+.button {
+  display: inline-block;
+  padding: 0.7rem 1.3rem;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  font-size: var(--step--1);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background var(--transition), border-color var(--transition),
+              color var(--transition), transform var(--transition);
+}
+.button:active { transform: translateY(1px); }
+
+.button-primary {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.button-primary:hover {
+  color: var(--on-accent);
+  background: color-mix(in srgb, var(--accent) 85%, var(--text));
+}
+
+.button-ghost {
+  border-color: var(--border);
+  color: var(--text);
+  background: transparent;
+}
+.button-ghost:hover {
+  border-color: var(--text-muted);
+  color: var(--text);
+}
+
+.text-link { font-weight: 500; }
+
+/* --- Tag lists ------------------------------------------------------------ */
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+}
+.tag-list li {
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  color: var(--text-muted);
+  background: var(--surface);
+}
+.tag-list-sm { font-size: 0.78rem; }
+
+/* --- Projects ------------------------------------------------------------- */
+
+.project-list {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.project {
+  /* Two columns on wide screens: a narrow metadata rail, then the content.
+     The media query in section 5 collapses this to one column. */
+  display: grid;
+  grid-template-columns: 9rem 1fr;
+  gap: var(--space-6);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border);
+}
+.project:first-child { border-top: 0; padding-top: 0; }
+
+.project-meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.project-year {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}
+
+.project-title {
+  font-size: var(--step-1);
+  margin-bottom: var(--space-3);
+}
+.project-title a {
+  color: var(--text);
+  text-decoration: none;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-size: 0% 1.5px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size var(--transition);
+}
+.project-title a:hover { background-size: 100% 1.5px; }
+
+.project-summary { font-weight: 500; }
+
+.project-detail {
+  color: var(--text-muted);
+  margin-top: var(--space-3);
+}
+
+.project-links {
+  display: flex;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+  font-size: var(--step--1);
+  font-weight: 600;
+}
+
+/* --- About ---------------------------------------------------------------- */
+
+.about-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: var(--space-7);
+  align-items: start;
+}
+
+.about-figure img {
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+/* --- Writing -------------------------------------------------------------- */
+
+.post-list { display: grid; gap: var(--space-5); }
+
+.post {
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--border);
+}
+.post:last-child { border-bottom: 0; padding-bottom: 0; }
+
+.post-date {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+  margin-bottom: var(--space-1);
+}
+
+.post-title {
+  font-size: var(--step-1);
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+}
+.post-title:hover { color: var(--accent); }
+
+.post-excerpt {
+  color: var(--text-muted);
+  margin-top: var(--space-2);
+}
+
+/* --- Contact -------------------------------------------------------------- */
+
+.contact-lede {
+  color: var(--text-muted);
+  margin-bottom: var(--space-5);
+}
+
+.social-list {
+  display: flex;
+  gap: var(--space-5);
+  margin-top: var(--space-5);
+  font-size: var(--step--1);
+  font-weight: 600;
+}
+
+/* --- Footer --------------------------------------------------------------- */
+
+.site-footer {
+  padding-block: var(--space-6);
+  border-top: 1px solid var(--border);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  justify-content: space-between;
+}
+.site-footer a { color: var(--text-muted); text-decoration: none; }
+.site-footer a:hover { color: var(--text); }
+
+
+/* ==========================================================================
+   5. RESPONSIVE
+   Mobile-first would mean writing the narrow styles first and adding
+   min-width queries. This file is built desktop-down instead, which is fine
+   for a layout this simple — but note how few overrides are needed. If you
+   ever need more than a handful, the base layout is too rigid.
+   ========================================================================== */
+
+@media (max-width: 44rem) {
+
+  /* Show the hamburger, hide the nav until it is toggled open. */
+  .nav-toggle { display: flex; }
+
+  .nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    /* Collapsed by default. JS flips .is-open. */
+    display: none;
+  }
+  .nav.is-open { display: block; }
+
+  .nav-list {
+    flex-direction: column;
+    gap: 0;
+    padding: var(--space-3) var(--space-5) var(--space-5);
+    font-size: var(--step-0);
+  }
+  .nav-list li { border-top: 1px solid var(--border); }
+  .nav-list a { display: block; padding-block: var(--space-3); }
+
+  /* Single column everywhere. */
+  .project { grid-template-columns: 1fr; gap: var(--space-3); }
+  .project-meta { flex-direction: row; align-items: center; gap: var(--space-3); }
+  .about-grid { grid-template-columns: 1fr; gap: var(--space-5); }
+
+  .section { padding-block: var(--space-7); }
+
+  /* Full-width buttons are much easier to hit with a thumb. */
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .button { text-align: center; }
+}
+
+
+/* ==========================================================================
+   6. USER PREFERENCES
+   ========================================================================== */
+
+/* Some people get motion sickness from animation. The OS exposes that
+   preference; honour it. This is two lines and it is not optional. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  .site-header, .nav-toggle, .hero-actions, .skip-link { display: none; }
+  body { color: #000; background: #fff; }
+  /* Print the destination of every link, since a printed page cannot be clicked. */
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; }
+}

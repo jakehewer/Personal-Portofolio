@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<!--
+  example-filled.html — the SAME markup as index.html, with invented content
+  filled in. This file exists so you can see the finished thing and, more
+  usefully, see what a project write-up should actually read like.
+  Not for deployment. Read it, steal the tone, then delete it.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jake Hewer — Software Engineer</title>
+  <meta name="description" content="Software engineer building backend services and developer tooling.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" id="site-header">
+    <div class="container header-inner">
+      <a class="wordmark" href="#top" aria-label="Home">JH</a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Menu">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+      <nav class="nav" id="primary-nav" aria-label="Primary">
+        <ul class="nav-list">
+          <li><a href="#work">Work</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#writing">Writing</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="container">
+        <p class="eyebrow">Software Engineer &middot; London</p>
+        <h1 class="hero-title">I build backend systems that stay <span class="accent">boring</span> under load.</h1>
+        <p class="hero-lede">
+          Currently at Northbound, working on the payments platform — Go services,
+          Postgres, and the unglamorous work of making failure modes predictable.
+          I like problems where the answer is a smaller system, not a bigger one.
+        </p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#work">See my work</a>
+          <a class="button button-ghost" href="mailto:hello@example.com">Get in touch</a>
+        </div>
+        <ul class="tag-list" aria-label="Core technologies">
+          <li>Go</li><li>TypeScript</li><li>PostgreSQL</li><li>AWS</li><li>Terraform</li><li>Docker</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="work">
+      <div class="container">
+        <h2 class="section-title">Selected work</h2>
+        <p class="section-intro">A few things I have built end to end. Each links to the code or a longer write-up.</p>
+
+        <div class="project-list">
+          <article class="project">
+            <div class="project-meta">
+              <p class="project-year">2026</p>
+              <ul class="tag-list tag-list-sm" aria-label="Technologies used"><li>Go</li><li>Redis</li><li>gRPC</li></ul>
+            </div>
+            <div class="project-body">
+              <h3 class="project-title"><a href="#">Ratchet — deployment gate service</a></h3>
+              <p class="project-summary">A service that holds a lock on each environment and only opens it when every required check has actually reported green.</p>
+              <p class="project-detail">
+                Our deploy pipeline let engineers approve a release before the slower integration
+                suite had finished, so a red build could reach production and nobody noticed until
+                the error rate moved. Ratchet inverts that: the deploy blocks on a lease, and the
+                lease is only granted when the checks report in. The interesting part was making it
+                fail open safely — if Ratchet itself is down, deploys must not stop, so leases carry
+                a TTL and the client degrades to a warning after 30 seconds. Bad-deploy rollbacks
+                went from roughly three a month to none in the six months since.
+              </p>
+              <p class="project-links"><a href="#">Source</a><a href="#">Write-up</a></p>
+            </div>
+          </article>
+
+          <article class="project">
+            <div class="project-meta">
+              <p class="project-year">2025</p>
+              <ul class="tag-list tag-list-sm" aria-label="Technologies used"><li>TypeScript</li><li>Postgres</li><li>Lambda</li></ul>
+            </div>
+            <div class="project-body">
+              <h3 class="project-title"><a href="#">Ledger reconciliation tooling</a></h3>
+              <p class="project-summary">A daily job that compares our internal ledger against the provider's settlement file and explains every difference.</p>
+              <p class="project-detail">
+                Finance were reconciling by hand in a spreadsheet, which took two days a month and
+                found breaks a week after they happened. The hard part was not the diff — it was
+                that the two systems disagree legitimately for about 14 hours around a settlement
+                window, so a naive comparison is all false positives. I modelled the expected lag
+                per payment method and only flag a break once it has survived its window. It now
+                runs in four minutes and finds real breaks the same morning.
+              </p>
+              <p class="project-links"><a href="#">Source</a></p>
+            </div>
+          </article>
+
+          <article class="project">
+            <div class="project-meta">
+              <p class="project-year">2025</p>
+              <ul class="tag-list tag-list-sm" aria-label="Technologies used"><li>Python</li><li>Docker</li></ul>
+            </div>
+            <div class="project-body">
+              <h3 class="project-title"><a href="#">pgslice — schema migration linter</a></h3>
+              <p class="project-summary">A pre-commit hook that catches Postgres migrations which will take a lock long enough to cause an outage.</p>
+              <p class="project-detail">
+                Written after I personally took a service down by adding a NOT NULL column to a
+                40-million-row table. It parses the migration, works out which lock each statement
+                takes and for how long, and refuses anything holding an ACCESS EXCLUSIVE lock on a
+                large table without an explicit override comment. About 200 lines of real logic and
+                a lot of test cases pulled from Postgres' own lock documentation.
+              </p>
+              <p class="project-links"><a href="#">Source</a></p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="about">
+      <div class="container">
+        <div class="about-grid">
+          <div>
+            <h2 class="section-title">About</h2>
+            <p>
+              I am a backend engineer at Northbound, a payments company in London, where I work on
+              the ledger and the services around it. Before that I spent three years at a smaller
+              startup doing a bit of everything, which is where I learned most of what I know about
+              operating software rather than just writing it.
+            </p>
+            <p>
+              What I am actually good at is reducing scope. Most of the projects above started as a
+              much larger proposal that I argued down to something we could ship in a fortnight and
+              understand a year later. I am at my most useful on systems that have grown awkward
+              and need someone patient to untangle them.
+            </p>
+            <p>
+              Away from work I climb badly and cook well. Currently open to conversations about
+              platform and infrastructure roles.
+            </p>
+            <p><a class="text-link" href="#">Download my CV (PDF)</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="writing">
+      <div class="container">
+        <h2 class="section-title">Writing</h2>
+        <ul class="post-list">
+          <li class="post">
+            <time class="post-date" datetime="2026-05-14">May 2026</time>
+            <a class="post-title" href="#">The migration that took us down</a>
+            <p class="post-excerpt">A postmortem of my own outage, and what Postgres lock levels actually mean in practice.</p>
+          </li>
+          <li class="post">
+            <time class="post-date" datetime="2026-02-02">Feb 2026</time>
+            <a class="post-title" href="#">Fail open, fail closed, fail loud</a>
+            <p class="post-excerpt">Choosing a failure mode is a product decision, not an implementation detail.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="contact">
+      <div class="container contact">
+        <h2 class="section-title">Get in touch</h2>
+        <p class="contact-lede">Happy to hear about platform and backend roles, or just to talk about anything above.</p>
+        <p><a class="button button-primary" href="mailto:hello@example.com">hello@example.com</a></p>
+        <ul class="social-list">
+          <li><a href="#">GitHub</a></li>
+          <li><a href="#">LinkedIn</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>&copy; <span data-year></span> Jake Hewer</p>
+      <p><a href="#top">Back to top</a></p>
+    </div>
+  </footer>
+
+  <script src="main.js" defer></script>
+</body>
+</html>
